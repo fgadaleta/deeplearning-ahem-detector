@@ -9,7 +9,11 @@ from __future__ import print_function
 import numpy as np
 np.random.seed(1337)  # for reproducibility
 
-from keras.datasets import mnist
+import matplotlib
+# Force matplotlib to not use any Xwindows backend.
+matplotlib.use('Agg')
+
+#from keras.datasets import mnist
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation, Flatten
 from keras.layers import Convolution2D, MaxPooling2D
@@ -36,7 +40,7 @@ path_class_0 = './data/class_0/'
 path_class_1 = './data/class_1/'
 
 # input image dimensions
-img_rows, img_cols = 258, 263
+img_rows, img_cols = 158, 164
 nb_classes = 2
 input_shape = (1, img_rows, img_cols)
 
@@ -47,12 +51,12 @@ class1_files = [f for f in listdir(path_class_1) if isfile(join(path_class_1, f)
 X_t = []
 Y_t = []
 
-for fn in class0_files[:5000]:
+for fn in class0_files[:1000]:
     img = io.imread(os.path.join(path_class_0, fn), as_grey=True)
     X_t.append([img])
     Y_t.append(0)
 
-for fn in class1_files[:5000]:
+for fn in class1_files[:1000]:
     img = io.imread(os.path.join(path_class_1, fn), as_grey=True)
     X_t.append([img])
     Y_t.append(1)
@@ -62,6 +66,7 @@ X_t = np.asarray(X_t)
 Y_t = np.asarray(Y_t)
 X_t = X_t.astype('float32')
 X_t /= 255
+
 
 
 model = Sequential()

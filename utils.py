@@ -1,5 +1,9 @@
 import librosa
 import numpy as np
+import matplotlib
+# Force matplotlib to not use any Xwindows backend.
+matplotlib.use('Agg')
+
 from matplotlib.pyplot import specgram
 import matplotlib.pyplot as plt
 import sys
