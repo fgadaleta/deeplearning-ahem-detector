@@ -1,3 +1,6 @@
+import matplotlib
+# Force matplotlib to not use any Xwindows backend.
+matplotlib.use('Agg')
 import os, sys
 import utils as ut
 
@@ -10,9 +13,9 @@ sound_file_paths = [os.path.join(path, "ahem_sounds.wav"),
 sound_names = ["ahem_sounds", "podcast_17_sample"]
 raw_sounds = ut.load_sound_files(sound_file_paths)
 
-windowsize = 22050  # size of sliding window (22050 samples == 0.5 sec)  
-step       = 11025
-maxfiles   = 100000
+windowsize = 44100  # size of sliding window (22050 samples == 0.5 sec)  
+step       = 22050
+maxfiles   = 50000
 
 # create negative samples
 audiosamples = raw_sounds[1]
