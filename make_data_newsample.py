@@ -52,7 +52,7 @@ for x in xrange(0, numsamples-windowsize, step):
     b = x               # begin 
     e = b+windowsize    # end 
     ut.printStuff('Creating spectrum image new samples [%d-%d] of %d file %d',(b,e, numsamples, numfiles))
-    filename = os.path.join(path, '/archive1/ahem_data/new_sample/partial_spectrum_%d.png'%x)
+    filename = os.path.join(path, '/archive/ahem_data/new_sample/partial_spectrum_%d.png'%x)
     ut.specgram_frombuffer(audiosamples[b:e], dimx, dimy, fname=filename, dpi=180)
     
         

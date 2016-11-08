@@ -28,7 +28,7 @@ import os, sys
 import utils as ut
 
 # Load sound files
-path = '/archive1/ahem_data/'
+path = '/archive/ahem_data/'
 sound_file_paths = [os.path.join(path, "ahem_sounds.wav"),
                     os.path.join(path, "podcast_17_sample.wav"),
                    ]
