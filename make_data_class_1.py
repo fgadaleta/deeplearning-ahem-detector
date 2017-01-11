@@ -28,7 +28,7 @@ import os, sys
 import utils as ut
 
 # Load sound files
-path = '/archive/ahem_data/'
+path = './archive/ahem_data/'
 sound_file_paths = [os.path.join(path, "ahem_sounds.wav"),
                     os.path.join(path, "podcast_17_sample.wav"),
                    ]
@@ -47,7 +47,7 @@ dimy = 5
 # create positive samples
 audiosamples = raw_sounds[0]
 numsamples = audiosamples.shape[0]
-for x in xrange(0, numsamples-windowsize, step):
+for x in range(0, numsamples-windowsize, step):
     numfiles +=1
     b = x               # begin 
     e = b+windowsize    # end 
