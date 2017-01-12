@@ -52,11 +52,11 @@ from keras.models import Sequential
 from keras.layers.core import Dense, Dropout, Activation, Flatten
 from keras.layers.convolutional import Convolution2D, MaxPooling2D
 from keras.utils import np_utils
-from keras import backend as K
+# from keras import backend as K
 from keras.models import model_from_json
 
 import skimage.io as io
-from skimage.measure import block_reduce
+# from skimage.measure import block_reduce
 
 import os
 from os import listdir
@@ -65,7 +65,7 @@ import utils as ut
 
 import librosa
 import librosa.display
-import IPython.display
+# import IPython.display
 
 
 # np.random.seed(1337)  # for reproducibility
@@ -89,8 +89,8 @@ kernel_size = (3, 3)
 
 # the data, shuffled and split between train and test sets
 # we save generated images here (make sure there is space)
-path_class_0 = './archive/ahem_data/class_0/'
-path_class_1 = './archive/ahem_data/class_1/'
+path_class_0 = './archive/class_0/'
+path_class_1 = './archive/class_1/'
 
 # load filenames into lists
 class0_files = [f for f in listdir(path_class_0) if isfile(join(path_class_0, f))]
@@ -204,15 +204,19 @@ def load_image(filename):
 
 # In[16]:
 
-model = make_model()
-model.compile(loss='binary_crossentropy', optimizer='adadelta', metrics=['accuracy'])
+# model = make_model()
+with open("./ahem_architecture.json", "r") as j:
+	model = model_from_json(f.read())
+	model.load_weights("./ahem_weights.h5")
+	print("loaded from disk")
+	model.compile(loss='binary_crossentropy', optimizer='adadelta', metrics=['accuracy'])
 
 
 # In[13]:
 
 for e in range(3):
 	model.fit(X_t, Y_t,
-			# validation_data=(X_test, Y_test),
+# 			# validation_data=(X_test, Y_test),
 			batch_size=batch_size,
 			nb_epoch=1, verbose=1)
 
@@ -239,7 +243,7 @@ print(np.sum(y == predictions))
 # In[ ]:
 
 # the data, shuffled and split between train and test sets
-path_newsample = './archive/ahem_data/new_sample/'
+path_newsample = './archive/new_sample/'
 newsample_files = [f for f in listdir(path_newsample) if isfile(join(path_newsample, f))]
 
 
@@ -278,7 +282,7 @@ noisy_files = [newsample_files[n] for n in noisy_frames]
 # In[ ]:
 
 # Load a sound with a lot of "ahem" in it
-path = './archive/ahem_data'
+path = './archive/'
 sound_file_paths = [os.path.join(path, "provocation_dirty.wav")]
 sound_names = ["dirty"]
 raw_sounds = ut.load_sound_files(sound_file_paths)
@@ -332,7 +336,7 @@ for start in range(1, len(noisy_start)):
 # In[ ]:
 
 # save to file and enjoy the clean episode!
-librosa.output.write_wav('./archive/ahem_data/cleaned.wav', clean_audio, sr=44100)
+librosa.output.write_wav('./archive/cleaned_test.wav', clean_audio, sr=44100)
 
 
 # # Audio analytics without deep learning
