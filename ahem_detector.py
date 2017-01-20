@@ -42,8 +42,8 @@ import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 # Force matplotlib to not use any Xwindows backend.
-import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
+# import matplotlib.pyplot as plt
+# import matplotlib.image as mpimg
 import matplotlib.style as ms
 ms.use('seaborn-muted')
 # get_ipython().magic('matplotlib inline')
@@ -206,7 +206,7 @@ def load_image(filename):
 
 # model = make_model()
 with open("./ahem_architecture.json", "r") as j:
-	model = model_from_json(f.read())
+	model = model_from_json(j.read())
 	model.load_weights("./ahem_weights.h5")
 	print("loaded from disk")
 	model.compile(loss='binary_crossentropy', optimizer='adadelta', metrics=['accuracy'])
@@ -225,17 +225,17 @@ for e in range(3):
 
 # In[14]:
 
-predictions = model.predict_classes(X_test)
+# predictions = model.predict_classes(X_test)
 
-y = []
-for e in Y_test:
-	if e[0] > e[1]:
-		y.append(0)
-	else:
-		y.append(1)
+# y = []
+# for e in Y_test:
+# 	if e[0] > e[1]:
+# 		y.append(0)
+# 	else:
+# 		y.append(1)
 
-print('how many did we guess out of ', Y_test.shape)
-print(np.sum(y == predictions))
+# print('how many did we guess out of ', Y_test.shape)
+# print(np.sum(y == predictions))
 
 
 # # Predictions on new audio sample
@@ -332,7 +332,6 @@ for start in range(1, len(noisy_start)):
 # Play it back!
 # IPython.display.Audio(data=clean_audio, rate=44100)
 
-
 # In[ ]:
 
 # save to file and enjoy the clean episode!
@@ -343,13 +342,13 @@ librosa.output.write_wav('./archive/cleaned_test.wav', clean_audio, sr=44100)
 
 # In[ ]:
 
-ut.plot_waves(sound_names, raw_sounds)
-ut.plot_specgram(list(sound_names[3:]), list(raw_sounds[3:]))
-ut.plot_log_power_specgram(sound_names, raw_sounds)
+# ut.plot_waves(sound_names, raw_sounds)
+# ut.plot_specgram(list(sound_names[3:]), list(raw_sounds[3:]))
+# ut.plot_log_power_specgram(sound_names, raw_sounds)
 
 # traditional audio features
-mfccs, chroma, mel, contrast, tonnetz = ut.extract_feature('./data/jingle.wav')
-ut.specgram_frombuffer(raw_sounds[0][0:44100], 6, 6, fname='./archive/buffer.png', show=True)
+# mfccs, chroma, mel, contrast, tonnetz = ut.extract_feature('./data/jingle.wav')
+# ut.specgram_frombuffer(raw_sounds[0][0:44100], 6, 6, fname='./archive/buffer.png', show=True)
 
 # found a good model to analyze the audio features above
 # and... good luck!
