@@ -30,10 +30,9 @@ import argparse
 parser = argparse.ArgumentParser(description="Create data for ahem detector")
 
 parser.add_argument("data_dir", action="store")
-parser.add_argument("class_", action="store", type=int)
 
 config = parser.parse_args()
-print("Creating samples of class: {}".format(config.class_))
+print("Creating samples from: {}".format(config.data_dir))
 
 if not path.isdir(config.data_dir):
 	raise Exception("First Argument is not a directory")
@@ -51,7 +50,7 @@ if len(sound_files) == 0:
 
 raw_sounds = ut.load_sound_files(sound_files)
 
-image_path = path.join(config.data_dir, "class_{}".format(config.class_))
+image_path = path.join(config.data_dir, "images")
 if not path.isdir(image_path):
 	mkdir(image_path)
 
@@ -67,15 +66,18 @@ for i in range(len(raw_sounds)):
 	numsamples = raw_sounds[i].shape[0]
 	file_path = path.basename(sound_files[i])
 	file_path = path.splitext(file_path)[0]
+	currFileNum = 0  # counter for each file
 	for x in range(0, numsamples - windowsize, step):
-		numfiles += 1
 		b = x               # begin
 		e = x + windowsize  # end
 
 		fmt_string = "(%d/%d) %s [%d-%d] of %d file %d"
 		ut.printStuff(fmt_string, (i, len(raw_sounds) - 1, file_path, x, e, numsamples, numfiles))
 
-		filename = path.join(image_path, "{}_%d.png".format(config.class_, file_path, x))
+		filename = path.join(image_path, "{}_{}.png".format(file_path, currFileNum))
 		ut.specgram_frombuffer(raw_sounds[i][x:e], dimx, dimy, fname=filename, dpi=180)
+
+		numfiles += 1
+		currFileNum += 1
 
 print('\nbye!\n')

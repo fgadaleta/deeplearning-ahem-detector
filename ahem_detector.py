@@ -65,6 +65,7 @@ import utils as ut
 
 import librosa
 import librosa.display
+from keras.utils.visualize_util import plot
 # import IPython.display
 
 
@@ -208,6 +209,7 @@ def load_image(filename):
 with open("./ahem_architecture.json", "r") as j:
 	model = model_from_json(j.read())
 	model.load_weights("./ahem_weights.h5")
+	plot(model, to_file='model.png')
 	print("loaded from disk")
 	model.compile(loss='binary_crossentropy', optimizer='adadelta', metrics=['accuracy'])
 
