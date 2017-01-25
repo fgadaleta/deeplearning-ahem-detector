@@ -66,7 +66,6 @@ for i in range(len(raw_sounds)):
 	numsamples = raw_sounds[i].shape[0]
 	file_path = path.basename(sound_files[i])
 	file_path = path.splitext(file_path)[0]
-	currFileNum = 0  # counter for each file
 	for x in range(0, numsamples - windowsize, step):
 		b = x               # begin
 		e = x + windowsize  # end
@@ -74,10 +73,9 @@ for i in range(len(raw_sounds)):
 		fmt_string = "(%d/%d) %s [%d-%d] of %d file %d"
 		ut.printStuff(fmt_string, (i, len(raw_sounds) - 1, file_path, x, e, numsamples, numfiles))
 
-		filename = path.join(image_path, "{}_{}.png".format(file_path, currFileNum))
+		filename = path.join(image_path, "{}_{}.png".format(file_path, x))
 		ut.specgram_frombuffer(raw_sounds[i][x:e], dimx, dimy, fname=filename, dpi=180)
 
 		numfiles += 1
-		currFileNum += 1
 
 print('\nbye!\n')
