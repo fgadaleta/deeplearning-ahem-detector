@@ -1,7 +1,4 @@
 # coding: utf-8
-
-# In[1]:
-
 """
 MIT License
 Copyright (c) 2016 Francesco Gadaleta
@@ -51,7 +48,7 @@ from keras.models import Sequential
 from keras.layers.core import Dense, Dropout, Activation, Flatten
 from keras.layers.convolutional import Convolution2D, MaxPooling2D
 from keras.utils import np_utils
-# from keras import backend as K
+from keras.models import model_from_json
 # from keras.utils.visualize_util import plot
 
 import skimage.io as io
@@ -59,7 +56,6 @@ import skimage.io as io
 
 from os import listdir
 from os.path import isfile, join, isdir
-
 
 import argparse
 
@@ -134,7 +130,8 @@ if __name__ == "__main__":
 					for f in listdir(config.class_1)
 					if isfile(join(config.class_1, f))]
 
-	print("Class_0 files:", len(class_0_files), "Class_1 files:", len(class_1_files))
+	print("Class_0 files:", len(class_0_files))
+	print("Class_1 files:", len(class_1_files))
 
 	# prepare training set
 	X_t = []
@@ -191,10 +188,16 @@ if __name__ == "__main__":
 
 	Y_test = np_utils.to_categorical(Y_test, nb_classes)
 
-	model = make_model()
+	# model = make_model()
+	with open("./ahem_architecture.json", "r") as j:
+		model = model_from_json(j.read())
+
+	model.load_weights("./ahem_weights.h5")
+	print("loaded from disk")
+
 	model.compile(loss='binary_crossentropy', optimizer='adadelta', metrics=['accuracy'])
 
-	for e in range(3):
+	for _ in range(3):
 		model.fit(X_t, Y_t,
 				# validation_data=(X_test, Y_test),
 				batch_size=batch_size,
@@ -209,7 +212,13 @@ if __name__ == "__main__":
 		else:
 			y.append(1)
 
-	print('how many did we guess out of ', Y_test.shape)
-	print(np.sum(y == predictions))
+	correct = np.sum(y == predictions)
+	percent = (correct / Y_test.shape[0]) * 100
+	print('{}/{}'.format(correct, Y_test.shape[0]), "{}%".format(percent))
 
-	# TODO: Write the model out to a new file - 01/25/17 11:15:08 sidneywijngaarde
+	model_json = model.to_json()
+	with open("./my_model.json", "w") as json_file:
+		json_file.write(model_json)
+	model.save_weights("./my_model_weights.h5")
+
+	print("Model written to:", "my_model.json", "my_model_weights.h5")
