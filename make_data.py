@@ -37,13 +37,10 @@ print("Creating samples from: {}".format(config.data_dir))
 if not path.isdir(config.data_dir):
 	raise Exception("First Argument is not a directory")
 
-def validPath(filePath):
-	return path.isfile(filePath) and filePath.endswith("wav")
-
 # Load sound files
 sound_files = [path.join(config.data_dir, f)
 				for f in listdir(config.data_dir)
-				if validPath(path.join(config.data_dir, f))]
+				if f.endswith("wav")]
 
 if len(sound_files) == 0:
 	raise Exception("There are no wav files in path: {}".format(config.data_dir))

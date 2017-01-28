@@ -11,8 +11,9 @@ from keras.models import model_from_json
 import skimage.io as io
 
 from os import listdir
-from os.path import isfile, join, isdir
+from os.path import join, isdir
 import utils as ut
+import json
 
 import librosa
 import librosa.display
@@ -24,15 +25,19 @@ if __name__ == "__main__":
 	parser.add_argument("new_data", action="store")
 
 	parser.add_argument("--model", action="store", help="file path for keras json",
-						dest="model", default="./ahem_architecture.json")
+						dest="model", default="./models/model.json")
 
 	parser.add_argument("--weights", action="store", help="file path for h5 weights",
-						dest="weights", default="./ahem_weights.h5")
+						dest="weights", default="./models/weights.h5")
 
 	config = parser.parse_args()
 
 	if not isdir(config.new_data):
 		raise Exception("Pass valid a folder path")
+
+	imgDir = join(config.new_data, "images")
+	if not isdir(imgDir):
+		raise Exception("{} does not contain images subdirectory" % config.new_data)
 
 	# Load the model from disk
 	with open(config.model, "r") as j:
@@ -42,9 +47,7 @@ if __name__ == "__main__":
 	print("Loaded:", config.model, config.weights)
 
 	model.compile(loss='binary_crossentropy', optimizer='adadelta', metrics=['accuracy'])
-	newsample_files = [join(config.new_data, f)
-					for f in listdir(config.new_data)
-					if isfile(join(config.new_data, f))]
+	newsample_files = [join(imgDir, f) for f in listdir(imgDir)]
 
 	# prepare test set as we did for training set
 	X_test = []
@@ -61,43 +64,52 @@ if __name__ == "__main__":
 
 	predictions = model.predict_classes(X_test)
 
-	# collect all indices of noisy samples (class 1)
-	# start position is encoded in filename (a trick to run this in parallel with no sequential order)
+	# collect all indices of uhh (class 1)
 	noisy_frames = np.where(predictions == 1)[0]
 	noisy_files = [newsample_files[n] for n in noisy_frames]
 
 	noisy_start = []
 	for fn in noisy_files:
+		# Start position is encoded in filename
+		# Can use this to run in parallel
 		noisy_start.append(int(fn.split('_')[-1].split('.')[0]))
 
 	noisy_start.sort(reverse=True)
 
-	# TODO: Fix file paths - 01/25/17 10:59:36 sidneywijngaarde
-	sound_file_paths = [join(config.new_data, "..", "provocation_dirty.wav")]
-	sound_names = ["dirty"]
-	raw_sounds = ut.load_sound_files(sound_file_paths)
+	# NOTE: There should only be one wav file here
+	sound_file = [join(config.new_data, f)
+					for f in listdir(config.new_data)
+					if f.endswith("wav")]
+
+	raw_sounds = ut.load_sound_files(sound_file)
 
 	# create positive samples
 	audiosamples = raw_sounds[0]
 	numsamples = audiosamples.shape[0]
 
-	clean_audio = audiosamples
-
-	print("Number of noisy frames:", len(noisy_frames))
-	print(noisy_start)
-	print(noisy_frames)
-
-	# clean_audio = audiosamples
 	prev_idx = 0
 	windowsize = 6000
+
+	def frameToSec(startFrame):
+		start = (startFrame * 0.5) / 22050
+		return [start, start + 0.068]
+
+	# Convert to seconds
+	seconds = [frameToSec(i) for i in noisy_start]
+
+	outPath = join(config.new_data, "results.json")
+	with open(outPath, "w") as outFile:
+		json.dump(seconds, outFile)
+		print("Results written to:", outPath)
+
+	# TODO: Remove from here down once we have a certain degree of confidence.
+	# We only care about the timestamps - 01/28/17 15:14:36 sidneywijngaarde
+
+	# Silence the section of the audio file
 	for start in range(1, len(noisy_start)):
-		prev_pos = noisy_start[prev_idx]
 		current_pos = noisy_start[start]
-		diff = prev_pos - current_pos
-		prev_idx += 1
 
 		# set volume to zero for 'ahem' samples
-		clean_audio[current_pos:current_pos + windowsize] = 0
-		print("Set", current_pos, current_pos + windowsize)
+		audiosamples[current_pos:current_pos + windowsize] = 0
 
-	librosa.output.write_wav(join(config.new_data, "..", "cleaned_test.wav"), clean_audio, sr=44100)
+	librosa.output.write_wav(join(config.new_data, "cleaned.wav"), audiosamples, sr=44100)

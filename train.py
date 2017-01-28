@@ -121,14 +121,20 @@ if __name__ == "__main__":
 	if not isdir(config.class_0) or not isdir(config.class_1):
 		raise Exception("Pass valid folder paths")
 
-	# Load sound files
-	class_0_files = [join(config.class_0, f)
-					for f in listdir(config.class_0)
-					if isfile(join(config.class_0, f))]
+	class_0_img_dir = join(config.class_0, "images")
+	class_1_img_dir = join(config.class_1, "images")
 
-	class_1_files = [join(config.class_1, f)
-					for f in listdir(config.class_1)
-					if isfile(join(config.class_1, f))]
+	if not isdir(class_0_img_dir) or not isdir(class_1_img_dir):
+		raise Exception("Paths do not contain images subdirectory")
+
+	# Load sound files
+	class_0_files = [join(class_0_img_dir, f)
+					for f in listdir(class_0_img_dir)
+					if isfile(join(class_0_img_dir, f))]
+
+	class_1_files = [join(class_1_img_dir, f)
+					for f in listdir(class_1_img_dir)
+					if isfile(join(class_1_img_dir, f))]
 
 	print("Class_0 files:", len(class_0_files))
 	print("Class_1 files:", len(class_1_files))
