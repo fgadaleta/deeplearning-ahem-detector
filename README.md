@@ -1,68 +1,55 @@
-# Deep Learning 'ahem' detector #
+## Pitchback Speech Recognition
+forked from
+[deeplearning-ahem-detector](reverse=Tru://github.com/worldofpiggy/deeplearning-ahem-detector)
 
-![alt text](https://github.com/worldofpiggy/deeplearning-ahem-detector/raw/master/ahem_explained.PNG "Ahem neural detector explained")
+[Original Documentation](./ahem.md)
 
-The ahem detector is a deep convolutional neural network that is trained on transformed audio signals to recognize "ahem" sounds.
-The network has been trained to detect such signals on the episodes of Data Science at Home, the podcast about data science at 
-[worldofpiggy.com/podcast](http://worldofpiggy.com/podcast) 
+## Getting Started
+It is recommended to run this in a virtual environment
 
-Slides and some technical details provided [here](https://docs.google.com/presentation/d/1QXQEOiAMj0uF2_Gafr2bn-kMniUJAIM1PLTFm1mUops/edit?usp=sharing).
+```bash
+$ virtualenv venv
+$ source venv/bin/activate
+$ pip install -r requirements.txt
+```
 
-Two sets of audio files are required, very similarly to a cohort study:
+1. Generate training data
+To generate training data use [make_data.py](./make_data.py). Ahem detector is
+a binary classifier and therefore expects two classes for training.
 
-- a negative sample with clean voice/sound and 
+The directory should contain wav files of the same class
 
-- a positive one with "ahem" sounds concatenated
+```bash
+$ python make_data.py [directory]
+```
 
-While the detector works for the aforementioned audio files, it can be generalized to any other audio input, provided enough data 
-are available. The minimum required is ~10 seconds for the positive samples and ~3 minutes for the negative cohort. 
-The network will adapt to the training data and can perform detection on different spoken voice.
+Perform the above on __data/ahem_data__ and __data/clean_data__ to start off.
+eg.
+```bash
+$ python make_data.py data/ahem_data/
+$ python make_data.py data/clean_data/
+```
 
+2. Train the model
+Once the images have been created we can train the model. Pass the same file
+path as used in [make_data.py](./make_data.py) above. Each should now contain a
+nested image directory.
 
-### How do I get set up? ###
-Once the training audio files are provided, just load the training set and train the network with the code in the ipython notebook.
-Make sure to create the local folder that has been hardcoded in the script files below.
-Build training/testing set before running the script. 
-Execute first 
+```bash
+$ python train [class_0 dir] [class_1 dir]
+```
 
-    % python make_data_class_0.py
-    % python make_data_class_1.py
+3. Predict on new samples
+Use the model weights from the previous step to predict the timestamps of "uhh"
+in a new file.
 
-A GPU is recommended as, under the conditions specific to this example at least 5 epochs are required to obtain ~81% accuracy.
+```bash
+$ python make_data.py [directory]
+$ python predict.py [directory] [--model MODEL] [--weights WEIGHTS] 
+```
 
+Use the --model and --weights flags to load in the model outputted in step 2.
+Predict will use [models/model.json](models/model.json) and
+[models/weights.h5](models/weights.h5) by default.
 
-### How do I clean a new dirty audio file?
-A new audio file must be trasformed in the same way of training files.
-This can be done with
-
-    % python make_data_newsample.py
-    
-Then follow the script in the ipython notebook that is commented enough to proceed without particular issues.
-
-
-
-
-
-
-
-## License and Copyright Notice
-
-MIT License
-Copyright (c) 2016 Francesco Gadaleta 
-
-Permission is hereby granted, free of charge, to any person obtaining a copy 
-of this software and associated documentation files (the "Software"), to deal 
-in the Software without restriction, including without limitation the rights 
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies 
-of the Software, and to permit persons to whom the Software is furnished to do 
-so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all 
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
-WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN 
-CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+The output will be written to a json file in the directory passed

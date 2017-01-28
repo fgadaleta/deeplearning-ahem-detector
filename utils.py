@@ -8,8 +8,6 @@ from matplotlib.pyplot import specgram
 import matplotlib.pyplot as plt
 import sys
 
-
-
 def load_sound_files(file_paths):
     raw_sounds = []
     for fp in file_paths:
