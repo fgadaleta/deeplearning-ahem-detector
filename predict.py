@@ -74,6 +74,8 @@ if __name__ == "__main__":
 		# Can use this to run in parallel
 		noisy_start.append(int(fn.split('_')[-1].split('.')[0]))
 
+	noisy_start.sort(reverse=True)
+
 	# NOTE: There should only be one wav file here
 	sound_file = [join(config.new_data, f)
 					for f in listdir(config.new_data)
@@ -98,7 +100,7 @@ if __name__ == "__main__":
 
 	outPath = join(config.new_data, "results.json")
 	with open(outPath, "w") as outFile:
-		json.dump({"timestamps": seconds}, outFile, indent=2)
+		json.dump({"timestamps": seconds[::-1]}, outFile, indent=2)
 		print("Results written to:", outPath)
 
 	# TODO: Remove from here down once we have a certain degree of confidence.
