@@ -195,10 +195,10 @@ if __name__ == "__main__":
 	Y_test = np_utils.to_categorical(Y_test, nb_classes)
 
 	# model = make_model()
-	with open("./ahem_architecture.json", "r") as j:
+	with open("./models/ahem_architecture.json", "r") as j:
 		model = model_from_json(j.read())
 
-	model.load_weights("./ahem_weights.h5")
+	model.load_weights("./models/ahem_weights.h5")
 	print("loaded from disk")
 
 	model.compile(loss='binary_crossentropy', optimizer='adadelta', metrics=['accuracy'])
