@@ -74,8 +74,6 @@ if __name__ == "__main__":
 		# Can use this to run in parallel
 		noisy_start.append(int(fn.split('_')[-1].split('.')[0]))
 
-	noisy_start.sort(reverse=True)
-
 	# NOTE: There should only be one wav file here
 	sound_file = [join(config.new_data, f)
 					for f in listdir(config.new_data)
@@ -90,6 +88,7 @@ if __name__ == "__main__":
 	prev_idx = 0
 	windowsize = 6000
 
+	# 22050 samples == 0.5 sec
 	def frameToSec(startFrame):
 		start = (startFrame * 0.5) / 22050
 		return [start, start + 0.068]
@@ -99,14 +98,14 @@ if __name__ == "__main__":
 
 	outPath = join(config.new_data, "results.json")
 	with open(outPath, "w") as outFile:
-		json.dump(seconds, outFile)
+		json.dump({"timestamps": seconds}, outFile, indent=2)
 		print("Results written to:", outPath)
 
 	# TODO: Remove from here down once we have a certain degree of confidence.
 	# We only care about the timestamps - 01/28/17 15:14:36 sidneywijngaarde
 
 	# Silence the section of the audio file
-	for start in range(1, len(noisy_start)):
+	for start in range(len(noisy_start)):
 		current_pos = noisy_start[start]
 
 		# set volume to zero for 'ahem' samples
