@@ -1,10 +1,10 @@
 # Deep Learning 'ahem' detector #
 
-![alt text](https://github.com/worldofpiggy/deeplearning-ahem-detector/raw/master/ahem_explained.PNG "Ahem neural detector explained")
+![alt text](https://github.com/fgadaleta/deeplearning-ahem-detector/raw/master/ahem_explained.PNG "Ahem neural detector explained")
 
 The ahem detector is a deep convolutional neural network that is trained on transformed audio signals to recognize "ahem" sounds.
 The network has been trained to detect such signals on the episodes of Data Science at Home, the podcast about data science at 
-[worldofpiggy.com/podcast](http://worldofpiggy.com/podcast) 
+[podcast.datascienceathome.com](https://podcast.datascienceathome.com) 
 
 Slides and some technical details provided [here](https://docs.google.com/presentation/d/1QXQEOiAMj0uF2_Gafr2bn-kMniUJAIM1PLTFm1mUops/edit?usp=sharing).
 
